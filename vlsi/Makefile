@@ -12,8 +12,13 @@ sim_dir=$(abspath .)
 #########################################################################################
 # include shared variables
 #########################################################################################
+include $(vlsi_dir)/custom.mk
 include $(vlsi_dir)/tutorial.mk
 include $(base_dir)/variables.mk
+
+# increase these since we're running long workloads
+#timeout_cycles = 100000000000
+#bmark_timeout_cycles = 1000000000000
 
 #########################################################################################
 # vlsi types and rules
@@ -42,7 +47,7 @@ HAMMER_EXEC        ?= $(if $(filter $(tech_name),sky130),\
                         ./example-vlsi-sky130,\
                         ./example-vlsi)
 VLSI_TOP           ?= $(TOP)
-VLSI_MODEL_DUT_NAME ?= chiptop
+VLSI_MODEL_DUT_NAME ?= chiptop0
 # If overriding, this should be relative to $(vlsi_dir)
 VLSI_OBJ_DIR       ?= build
 ifneq ($(CUSTOM_VLOG),)
@@ -134,7 +139,7 @@ $(SYN_CONF): $(VLSI_RTL)
 #########################################################################################
 # simulation and power input configuration
 #########################################################################################
-include $(base_dir)/vcs.mk
+include $(base_dir)/sims/vcs/vcs.mk
 
 SIM_FILE_REQS += \
 	$(ROCKETCHIP_RSRCS_DIR)/vsrc/TestDriver.v
@@ -171,4 +176,4 @@ $(OBJ_DIR)/hammer.d: $(HAMMER_D_DEPS)
 #########################################################################################
 .PHONY: clean
 clean:
-	rm -rf $(VLSI_OBJ_DIR) hammer-vlsi*.log __pycache__ output.json $(GENERATED_CONFS) $(gen_dir) $(SIM_CONF) $(SIM_DEBUG_CONF) $(SIM_TIMING_CONF) $(POWER_CONF)
+	rm -rf $(VLSI_OBJ_DIR) hammer-vlsi*.log __pycache__ output.json $(GENERATED_CONFS) $(CLASSPATH_CACHE) $(gen_dir) $(SIM_CONF) $(SIM_DEBUG_CONF) $(SIM_TIMING_CONF) $(POWER_CONF)
